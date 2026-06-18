@@ -1,0 +1,744 @@
+@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Caveat:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --ink-charcoal: #2d3748;
+  --ink-blue: #1a365d;
+  --ink-red: #742a2a;
+  --paper-cream: #faf7f2;
+  --paper-line-blue: #e2ebf0;
+  --margin-red: #ff8b8b;
+  --tape-yellow: rgba(24ef, 230, 150, 0.45);
+  --hl-yellow: rgba(254, 240, 138, 0.6);
+  --hl-green: rgba(187, 247, 208, 0.6);
+  --hl-pink: rgba(fecdd3, 0.6);
+  --font-hand: 'Caveat', cursive;
+  --font-sketch: 'Architects Daughter', cursive;
+  --font-ui: 'Outfit', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #e2dcd5;
+  color: var(--ink-charcoal);
+  font-family: var(--font-ui);
+  min-height: 100vh;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Custom Scrollbar for Sketchy Theme */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-left: 2px solid var(--ink-charcoal);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ink-charcoal);
+  border-radius: 4px;
+  border: 2px solid #e2dcd5;
+}
+
+/* -------------------------------------------------------------
+   Notebook & Paper Layouts
+   ------------------------------------------------------------- */
+
+.notebook-binder {
+  display: flex;
+  width: 100%;
+  max-width: 1300px;
+  background: transparent;
+  position: relative;
+  margin: 0 auto;
+}
+
+/* Split book view or single page active */
+.notebook-page {
+  flex: 1;
+  background-color: var(--paper-cream);
+  min-height: 80vh;
+  box-shadow: 6px 8px 0px rgba(0, 0, 0, 0.8);
+  border: 3px solid var(--ink-charcoal);
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  padding: 2.5rem 2.5rem 2.5rem 4rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+/* Lined paper effect */
+.paper-lined {
+  background-image: linear-gradient(var(--paper-line-blue) 1px, transparent 1px);
+  background-size: 100% 2.2rem;
+  line-height: 2.2rem;
+}
+
+/* Red left margin line */
+.paper-lined::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 3.2rem;
+  width: 2px;
+  height: 100%;
+  background-color: var(--margin-red);
+}
+
+/* Center spiral binder */
+.notebook-spiral {
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding: 2rem 0;
+  position: relative;
+  z-index: 10;
+  margin: 0 -20px; /* overlay the spiral on pages */
+  pointer-events: none;
+}
+
+.spiral-ring {
+  width: 45px;
+  height: 22px;
+  background: linear-gradient(180deg, #a0aec0 0%, #4a5568 50%, #1a202c 100%);
+  border: 2px solid var(--ink-charcoal);
+  border-radius: 12px;
+  box-shadow: 2px 3px 0px rgba(0, 0, 0, 0.4);
+  margin: 0.8rem 0;
+}
+
+/* -------------------------------------------------------------
+   Wobbly Elements & Tape
+   ------------------------------------------------------------- */
+
+.wobbly-box {
+  border: 2px solid var(--ink-charcoal);
+  border-radius: 255px 12px 225px 15px/15px 225px 12px 255px;
+  padding: 1rem;
+  background: white;
+  box-shadow: 3px 4px 0px var(--ink-charcoal);
+  position: relative;
+}
+
+.wobbly-input {
+  width: 100%;
+  border: 2px solid var(--ink-charcoal);
+  border-radius: 120px 8px 180px 10px/10px 140px 8px 160px;
+  padding: 0.5rem 0.8rem;
+  font-family: var(--font-hand);
+  font-size: 1.4rem;
+  color: var(--ink-blue);
+  outline: none;
+  background-color: #ffffff;
+}
+.wobbly-input:focus {
+  background-color: #fffdf5;
+  border-color: #3182ce;
+}
+
+.tape-decor {
+  position: absolute;
+  width: 90px;
+  height: 24px;
+  background-color: rgba(253, 224, 71, 0.45); /* yellow sticky tape */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  border-left: 2px dashed rgba(0,0,0,0.1);
+  border-right: 2px dashed rgba(0,0,0,0.1);
+  pointer-events: none;
+}
+
+.tape-decor-angle {
+  position: absolute;
+  width: 60px;
+  height: 20px;
+  background-color: rgba(254, 205, 211, 0.45);
+  top: -8px;
+  left: -8px;
+  transform: rotate(-35deg);
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------
+   Typography & Handwriting Customization
+   ------------------------------------------------------------- */
+
+.handwritten {
+  font-family: var(--font-hand);
+  font-size: 1.6rem;
+  line-height: 1.8rem;
+}
+
+.sketchy-heading {
+  font-family: var(--font-sketch);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-charcoal);
+}
+
+/* Highlighter styles */
+.highlight-yellow {
+  background: linear-gradient(104deg, var(--hl-yellow) 0%, rgba(254, 240, 138, 0.15) 100%);
+  border-radius: 0.4em 0.1em;
+  padding: 0.1rem 0.3rem;
+}
+
+.highlight-green {
+  background: linear-gradient(104deg, var(--hl-green) 0%, rgba(187, 247, 208, 0.15) 100%);
+  border-radius: 0.4em 0.1em;
+  padding: 0.1rem 0.3rem;
+}
+
+.highlight-pink {
+  background: linear-gradient(104deg, rgba(254, 190, 200, 0.6) 0%, rgba(254, 190, 200, 0.15) 100%);
+  border-radius: 0.4em 0.1em;
+  padding: 0.1rem 0.3rem;
+}
+
+/* -------------------------------------------------------------
+   Interactive Buttons
+   ------------------------------------------------------------- */
+
+.sketchy-btn {
+  font-family: var(--font-sketch);
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 2px solid var(--ink-charcoal);
+  border-radius: 150px 10px 120px 15px/15px 130px 10px 140px;
+  box-shadow: 2px 3px 0px var(--ink-charcoal);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.05s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.sketchy-btn:hover {
+  background-color: #faf7f2;
+  transform: translate(0.5px, 0.5px);
+  box-shadow: 1.5px 2px 0px var(--ink-charcoal);
+}
+
+.sketchy-btn:active {
+  transform: translate(2px, 3px);
+  box-shadow: 0px 0px 0px var(--ink-charcoal);
+}
+
+.sketchy-btn-accent {
+  background-color: var(--hl-yellow);
+}
+.sketchy-btn-accent:hover {
+  background-color: #fef08a;
+}
+
+.sketchy-btn-danger {
+  background-color: rgba(254, 205, 211, 0.5);
+}
+.sketchy-btn-danger:hover {
+  background-color: #fecdd3;
+}
+
+.sketchy-btn-green {
+  background-color: var(--hl-green);
+}
+
+/* Small toggle tabs */
+.sketchy-tab {
+  font-family: var(--font-sketch);
+  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
+  border: 2px solid var(--ink-charcoal);
+  border-bottom: none;
+  background: #e2dcd5;
+  border-radius: 12px 12px 0 0;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  transform: translateY(2px);
+}
+.sketchy-tab.active {
+  background: var(--paper-cream);
+  transform: translateY(0);
+  font-weight: bold;
+  box-shadow: 0px -2px 0px rgba(0,0,0,0.1);
+  border-bottom: 2px solid var(--paper-cream);
+  z-index: 5;
+}
+
+/* -------------------------------------------------------------
+   Calendar Component Styling
+   ------------------------------------------------------------- */
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-top: 2px solid var(--ink-charcoal);
+  border-left: 2px solid var(--ink-charcoal);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 3px 3px 0px var(--ink-charcoal);
+  background: white;
+}
+
+.calendar-day-header {
+  grid-column: span 1;
+  text-align: center;
+  padding: 0.6rem 0.2rem;
+  border-right: 2px solid var(--ink-charcoal);
+  border-bottom: 2px solid var(--ink-charcoal);
+  background-color: #edf2f7;
+  font-family: var(--font-sketch);
+  font-size: 0.8rem;
+}
+
+.calendar-cell {
+  min-height: 110px;
+  padding: 0.4rem;
+  border-right: 2px solid var(--ink-charcoal);
+  border-bottom: 2px solid var(--ink-charcoal);
+  position: relative;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  transition: background-color 0.1s ease;
+}
+
+.calendar-cell.today {
+  background-color: #fef08a; /* highlighted yellow today */
+}
+
+.calendar-cell.vacation-day {
+  background-color: #edf2f7;
+  background-image: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(0,0,0,0.03) 10px, rgba(0,0,0,0.03) 20px);
+}
+
+.calendar-cell.absent-day {
+  background-color: #fee2e2; /* light red absent day */
+}
+
+.calendar-date-num {
+  font-family: var(--font-sketch);
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+  display: inline-block;
+}
+
+.calendar-class-item {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.3rem;
+  border: 1px solid var(--ink-charcoal);
+  border-radius: 4px;
+  margin-bottom: 0.2rem;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  transition: all 0.1s ease;
+}
+.calendar-class-item:hover {
+  transform: scale(1.02);
+}
+
+/* Colors for attendance status */
+.class-status-present {
+  background-color: #c6f6d5;
+  color: #22543d;
+  border-color: #2f855a;
+}
+.class-status-absent {
+  background-color: #fed7d7;
+  color: #742a2a;
+  border-color: #c53030;
+  text-decoration: line-through;
+}
+.class-status-cancelled {
+  background-color: #e2e8f0;
+  color: #4a5568;
+  border-color: #718096;
+  opacity: 0.65;
+  text-decoration: line-through;
+}
+.class-status-rescheduled {
+  background-color: #feebc8;
+  color: #7b341e;
+  border-color: #dd6b20;
+}
+
+/* -------------------------------------------------------------
+   Modal Box Design (Paper popups)
+   ------------------------------------------------------------- */
+
+.paper-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+}
+
+.paper-modal {
+  width: 90%;
+  max-width: 500px;
+  background-color: var(--paper-cream);
+  border: 3px solid var(--ink-charcoal);
+  border-radius: 12px;
+  box-shadow: 8px 10px 0px rgba(0,0,0,0.85);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  animation: modalPop 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPop {
+  0% { transform: scale(0.9) rotate(-1deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  font-family: var(--font-sketch);
+  color: var(--ink-charcoal);
+}
+.modal-close:hover {
+  color: var(--ink-red);
+}
+
+/* -------------------------------------------------------------
+   Utilities & Responsiveness
+   ------------------------------------------------------------- */
+
+.grid-cols-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.flex-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mt-4 { margin-top: 1rem; }
+.mb-4 { margin-bottom: 1rem; }
+.p-2 { padding: 0.5rem; }
+
+/* Responsive break for small screens */
+@media (max-width: 900px) {
+  body {
+    padding: 0.5rem;
+  }
+  .notebook-binder {
+    flex-direction: column;
+  }
+  .notebook-spiral {
+    display: none;
+  }
+  .notebook-page {
+    padding: 1.5rem 1.5rem 1.5rem 2.5rem;
+  }
+  .paper-lined::before {
+    left: 2rem;
+  }
+  .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+  .calendar-grid {
+    grid-template-columns: 1fr;
+  }
+  .calendar-cell {
+    min-height: auto;
+    border-right: none;
+  }
+}
+
+/* ========================================================================
+   Google Calendar Timeline View Layout
+   ======================================================================== */
+
+.gcal-weekly-container {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--ink-charcoal);
+  border-radius: 8px;
+  background-color: white;
+  overflow: hidden;
+  box-shadow: 4px 5px 0px var(--ink-charcoal);
+}
+
+.gcal-weekly-header {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+  border-bottom: 2px solid var(--ink-charcoal);
+  background-color: #f7fafc;
+}
+
+.gcal-header-cell {
+  text-align: center;
+  padding: 0.8rem 0.2rem;
+  border-right: 1px solid var(--paper-line-blue);
+  font-family: var(--font-sketch);
+  font-size: 0.85rem;
+}
+
+.gcal-header-cell:last-child {
+  border-right: none;
+}
+
+/* Time axis column */
+.gcal-time-header {
+  border-right: 2px solid var(--ink-charcoal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sketch);
+  font-size: 0.75rem;
+  color: #718096;
+}
+
+/* All day row for holidays */
+.gcal-all-day-row {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+  border-bottom: 2px solid var(--ink-charcoal);
+  background-color: #f7fafc;
+}
+
+.gcal-all-day-cell {
+  min-height: 40px;
+  padding: 0.3rem;
+  border-right: 1px solid var(--paper-line-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gcal-all-day-cell:last-child {
+  border-right: none;
+}
+
+.gcal-all-day-badge {
+  width: 100%;
+  padding: 0.15rem 0.4rem;
+  border: 1px solid var(--ink-charcoal);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Main scrollable grid layout */
+.gcal-grid-scroll {
+  height: 550px;
+  overflow-y: scroll;
+  position: relative;
+}
+
+.gcal-weekly-grid {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+  position: relative;
+  height: 600px; /* 10 hours * 60px = 600px */
+}
+
+/* Draw grid lines */
+.gcal-grid-lines-container {
+  position: absolute;
+  top: 0;
+  left: 80px;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.gcal-grid-line {
+  height: 60px;
+  border-bottom: 1px dashed var(--paper-line-blue);
+  width: 100%;
+}
+
+.gcal-time-col {
+  border-right: 2px solid var(--ink-charcoal);
+  background-color: #f7fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+.gcal-time-slot {
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 4px;
+  font-size: 0.75rem;
+  color: #718096;
+  font-family: var(--font-sketch);
+  border-bottom: 1px solid var(--paper-line-blue);
+}
+
+.gcal-day-column {
+  border-right: 1px solid var(--paper-line-blue);
+  position: relative;
+  height: 100%;
+}
+
+.gcal-day-column:last-child {
+  border-right: none;
+}
+
+.gcal-day-column.today {
+  background-color: rgba(254, 240, 138, 0.15);
+}
+
+.gcal-day-column.vacation-column {
+  background-color: #f7fafc;
+  background-image: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(0,0,0,0.02) 10px, rgba(0,0,0,0.02) 20px);
+}
+
+/* Event cards placed absolutely */
+.gcal-event-card {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  border: 2px solid var(--ink-charcoal);
+  border-radius: 6px;
+  padding: 0.35rem 0.5rem;
+  overflow: hidden;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.85);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  transition: all 0.1s ease;
+}
+
+.gcal-event-card:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 3px 3px 0px rgba(0,0,0,0.95);
+  z-index: 10;
+}
+
+.gcal-event-title {
+  font-family: var(--font-sketch);
+  font-size: 0.8rem;
+  font-weight: bold;
+  line-height: 0.9rem;
+  margin-bottom: 0.15rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.gcal-event-desc {
+  font-family: var(--font-hand);
+  font-size: 1rem;
+  line-height: 1rem;
+  color: #4a5568;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.gcal-event-meta {
+  margin-top: auto;
+  font-size: 0.65rem;
+  color: #718096;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* Month view refinements */
+.gcal-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-top: 2px solid var(--ink-charcoal);
+  border-left: 2px solid var(--ink-charcoal);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 4px 5px 0px var(--ink-charcoal);
+  background: white;
+}
+
+.gcal-month-cell {
+  min-height: 120px;
+  border-right: 2px solid var(--ink-charcoal);
+  border-bottom: 2px solid var(--ink-charcoal);
+  padding: 0.3rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.gcal-month-cell.today {
+  background-color: rgba(254, 240, 138, 0.3);
+}
+
+.gcal-month-date {
+  font-family: var(--font-sketch);
+  font-size: 0.85rem;
+  font-weight: bold;
+  align-self: flex-end;
+  padding: 0.15rem 0.3rem;
+}
+
+.gcal-month-date.today-badge {
+  background-color: var(--ink-charcoal);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gcal-month-event-chip {
+  padding: 0.1rem 0.3rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border: 1px solid var(--ink-charcoal);
+  border-radius: 4px;
+  margin-bottom: 2px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 1px 1px 0px rgba(0,0,0,0.85);
+}
+

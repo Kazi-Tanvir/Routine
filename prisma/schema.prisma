@@ -1,0 +1,97 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Student {
+  id              Int          @id @default(autoincrement())
+  name            String
+  code            String       @unique // e.g. "student_a", "student_b"
+  color           String       @default("#2b6cb0")
+  courseStartDate String       @default("2026-01-01")
+  courses         Course[]
+  weeklySlots     WeeklySlot[]
+  dailyClasses    DailyClass[]
+  attendance      Attendance[]
+  vacations       Vacation[]
+}
+
+model Course {
+  id             Int          @id @default(autoincrement())
+  studentId      Int
+  student        Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectId      String       // User-specified ID e.g. "CSE-1101"
+  subjectName    String
+  subjectCode    String
+  teacherName    String
+  teacherCode    String
+  teacherContact String
+  teacherEmail   String
+  weeklySlots    WeeklySlot[]
+  dailyClasses   DailyClass[]
+  attendance     Attendance[]
+
+  @@unique([studentId, subjectId])
+}
+
+model WeeklySlot {
+  id           Int          @id @default(autoincrement())
+  studentId    Int
+  student      Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId     Int
+  course       Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  dayOfWeek    String       // "SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"
+  startTime    String       // "HH:MM" e.g. "10:00"
+  endTime      String       // "HH:MM" e.g. "11:00"
+  room         String?
+  group        String?      // e.g. "Group A" or "C1"
+  dailyClasses DailyClass[]
+}
+
+model DailyClass {
+  id           Int          @id @default(autoincrement())
+  studentId    Int
+  student      Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId     Int
+  course       Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  weeklySlotId Int?
+  weeklySlot   WeeklySlot?  @relation(fields: [weeklySlotId], references: [id], onDelete: Cascade)
+  date         String       // "YYYY-MM-DD"
+  startTime    String
+  endTime      String
+  room         String?
+  group        String?
+  status       String       @default("SCHEDULED") // "SCHEDULED", "RESCHEDULED", "CANCELLED"
+  isExtra      Boolean      @default(false)
+  attendance   Attendance[]
+}
+
+model Attendance {
+  id           Int         @id @default(autoincrement())
+  studentId    Int
+  student      Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId     Int
+  course       Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  date         String      // "YYYY-MM-DD"
+  status       String      // "PRESENT", "ABSENT", "CANCELLED"
+  weeklySlotId Int?
+  dailyClassId Int?
+  dailyClass   DailyClass? @relation(fields: [dailyClassId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId, date, weeklySlotId, dailyClassId])
+}
+
+model Vacation {
+  id          Int      @id @default(autoincrement())
+  studentId   Int
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date        String   // "YYYY-MM-DD"
+  type        String   // "VACATION" or "ABSENT_DAY"
+  description String?  // Reason for vacation or absent day
+
+  @@unique([studentId, date])
+}
