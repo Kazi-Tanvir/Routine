@@ -83,7 +83,7 @@ export default function AnalyticsView({
               <p className="sketchy-heading" style={{ fontSize: '1.8rem', color: '#2b6cb0' }}>{analyticsData.summary.totalPresent}</p>
             </div>
             <div className="wobbly-box" style={{ padding: '1rem', textAlign: 'center' }}>
-              <p className="handwritten" style={{ fontSize: '1.1rem' }}>Total Absent Days</p>
+              <p className="handwritten" style={{ fontSize: '1.1rem' }}>Total Absent Class</p>
               <p className="sketchy-heading" style={{ fontSize: '1.8rem', color: '#c53030' }}>{analyticsData.summary.totalAbsent}</p>
             </div>
           </div>

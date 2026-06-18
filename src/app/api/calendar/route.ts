@@ -113,7 +113,9 @@ export async function GET(request: Request) {
             group: slot.group,
             status: 'SCHEDULED', // default
             isExtra: false,
-            attendanceStatus: null // to resolve next
+            attendanceStatus: null, // to resolve next
+            studentId: id,
+            date: dateStr
           };
 
           if (override) {
@@ -162,7 +164,9 @@ export async function GET(request: Request) {
             group: extra.group,
             status: extra.status,
             isExtra: true,
-            attendanceStatus: null
+            attendanceStatus: null,
+            studentId: id,
+            date: dateStr
           };
 
           const att = attendance.find(a => 

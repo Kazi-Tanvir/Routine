@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Plus, Clock, MapPin, CheckCircle, AlertCircle } from 'lucide-react';
+import { Plus, Clock, MapPin, CheckCircle, AlertCircle, Check, X } from 'lucide-react';
 
 interface CalendarViewProps {
   students: any[];
@@ -18,6 +18,7 @@ interface CalendarViewProps {
   setVacationData: (data: any) => void;
   setShowVacationModal: (show: boolean) => void;
   getReadableDate: (dateStr: string) => string;
+  toggleAttendance: (studentId: number, classItem: any, date: string, status: string) => void;
 }
 
 // Helper to convert time "HH:MM" to decimal hours (e.g. "10:30" -> 10.5)
@@ -48,7 +49,8 @@ export default function CalendarView({
   setShowSubjectModal,
   setVacationData,
   setShowVacationModal,
-  getReadableDate
+  getReadableDate,
+  toggleAttendance
 }: CalendarViewProps) {
 
   const activeStudent = students.find(s => s.id === selectedStudentId);
@@ -422,6 +424,26 @@ export default function CalendarView({
                             <span className="flex-row"><Clock size={12} /> {c.startTime} - {c.endTime}</span>
                             <span className="flex-row"><MapPin size={12} /> Room {c.room || 'TBA'}</span>
                           </div>
+                        </div>
+
+                        {/* Log Attendance Directly */}
+                        <div className="flex-row" onClick={(e) => e.stopPropagation()}>
+                          <button 
+                            onClick={() => toggleAttendance(selectedStudentId, c, dateKey, 'PRESENT')}
+                            className={`sketchy-btn ${c.attendanceStatus === 'PRESENT' ? 'class-status-present' : ''}`}
+                            style={{ padding: '0.3rem 0.6rem', border: '1px solid #718096', boxShadow: 'none' }}
+                            title="Mark Done / Present"
+                          >
+                            <Check size={14} />
+                          </button>
+                          <button 
+                            onClick={() => toggleAttendance(selectedStudentId, c, dateKey, 'ABSENT')}
+                            className={`sketchy-btn ${c.attendanceStatus === 'ABSENT' ? 'class-status-absent' : ''}`}
+                            style={{ padding: '0.3rem 0.6rem', border: '1px solid #718096', boxShadow: 'none' }}
+                            title="Mark Absent"
+                          >
+                            <X size={14} />
+                          </button>
                         </div>
                       </div>
                     ))}

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { X, Clock, MapPin, User, Mail, Phone, FileText, Edit3 } from 'lucide-react';
+import { X, Clock, MapPin, User, Mail, Phone, FileText, Edit3, Check } from 'lucide-react';
 
 // ============================================================================
 // 1. SUBJECT DETAIL MODAL
@@ -11,13 +11,15 @@ interface SubjectModalProps {
   setShowSubjectModal: (show: boolean) => void;
   setOverrideData: (data: any) => void;
   setShowOverrideModal: (show: boolean) => void;
+  toggleAttendance: (studentId: number, classItem: any, date: string, status: string) => void;
 }
 
 export function SubjectModal({
   selectedClass,
   setShowSubjectModal,
   setOverrideData,
-  setShowOverrideModal
+  setShowOverrideModal,
+  toggleAttendance
 }: SubjectModalProps) {
   if (!selectedClass) return null;
 
@@ -66,6 +68,42 @@ export function SubjectModal({
                 <Mail size={14} /> <strong>Email:</strong> {selectedClass.course.teacherEmail}
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Class Instance Attendance Logging */}
+        <div className="wobbly-box mt-4" style={{ padding: '1rem', background: '#f0fff4', borderColor: '#2f855a' }}>
+          <h3 className="sketchy-heading" style={{ fontSize: '0.9rem', marginBottom: '0.6rem', color: '#2f855a' }}>
+            📅 Class Date: {selectedClass.date}
+          </h3>
+          <div className="flex-between">
+            <span className="handwritten" style={{ fontSize: '1.2rem' }}>
+              Current Status: <strong>{selectedClass.attendanceStatus || 'SCHEDULED'}</strong>
+            </span>
+            <div className="flex-row">
+              <button 
+                onClick={() => {
+                  toggleAttendance(selectedClass.studentId, selectedClass, selectedClass.date, 'PRESENT');
+                  setShowSubjectModal(false);
+                }}
+                className={`sketchy-btn ${selectedClass.attendanceStatus === 'PRESENT' ? 'class-status-present' : ''}`}
+                style={{ padding: '0.3rem 0.6rem', border: '1px solid #718096', boxShadow: 'none' }}
+                title="Mark Done / Present"
+              >
+                <Check size={14} /> Done
+              </button>
+              <button 
+                onClick={() => {
+                  toggleAttendance(selectedClass.studentId, selectedClass, selectedClass.date, 'ABSENT');
+                  setShowSubjectModal(false);
+                }}
+                className={`sketchy-btn ${selectedClass.attendanceStatus === 'ABSENT' ? 'class-status-absent' : ''}`}
+                style={{ padding: '0.3rem 0.6rem', border: '1px solid #718096', boxShadow: 'none' }}
+                title="Mark Absent"
+              >
+                <X size={14} /> Absent
+              </button>
+            </div>
           </div>
         </div>
 
@@ -130,7 +168,7 @@ export function OverrideModal({
         <div className="tape-decor"></div>
         
         <h2 className="sketchy-heading" style={{ fontSize: '1.4rem', marginBottom: '1rem' }}>✏ Edit Class Session Override</h2>
-        <p className="handwritten mb-4" style={{ fontSize: '1.1rem', color: '#718096' }}>Modifying this session only on the date: <strong>{currentDate}</strong></p>
+        <p className="handwritten mb-4" style={{ fontSize: '1.1rem', color: '#718096' }}>Modifying this session only on the date: <strong>{selectedClass.date}</strong></p>
 
         <form onSubmit={handleSaveOverride} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div>

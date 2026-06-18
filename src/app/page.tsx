@@ -21,78 +21,6 @@ import {
   SlotModal 
 } from '@/components/Modals';
 
-// ============================================================================
-// Fallback Mock Data for Demo Mode (if MySQL database is not connected)
-// ============================================================================
-const MOCK_STUDENTS = [
-  { id: 1, name: "Student A (BSSE 18th)", code: "student_a", color: "#2b6cb0" },
-  { id: 2, name: "Student B (L1T1 Sec C)", code: "student_b", color: "#c53030" }
-];
-
-const MOCK_COURSES = {
-  1: [
-    { id: 101, studentId: 1, subjectId: "CSE-1101", subjectName: "Structured Programming", subjectCode: "CSE 1101", teacherName: "Prof. Kazi Muheymin-Us-Sakib", teacherCode: "KMS", teacherContact: "+880 123456789", teacherEmail: "kms@du.ac.bd" },
-    { id: 102, studentId: 1, subjectId: "CSE-1102", subjectName: "Discrete Mathematics", subjectCode: "CSE 1102", teacherName: "Associate Prof. Shah Mostafa Khaled", teacherCode: "SMK", teacherContact: "+880 987654321", teacherEmail: "smk@du.ac.bd" },
-    { id: 103, studentId: 1, subjectId: "STAT-1103", subjectName: "Probability and Statistics for Engineers I", subjectCode: "STAT 1103", teacherName: "Guest Teacher G-MML", teacherCode: "G-MML", teacherContact: "TBA", teacherEmail: "mml.statistics@du.ac.bd" },
-    { id: 104, studentId: 1, subjectId: "MATH-1107", subjectName: "Calculus I", subjectCode: "MATH 1107", teacherName: "Guest Teacher G-SI", teacherCode: "G-SI", teacherContact: "TBA", teacherEmail: "si.math@du.ac.bd" },
-    { id: 105, studentId: 1, subjectId: "GE-1105", subjectName: "Introduction to Sociology", subjectCode: "GE 1105", teacherName: "Guest Teacher G-MAA", teacherCode: "G-MAA", teacherContact: "TBA", teacherEmail: "maa.sociology@du.ac.bd" },
-    { id: 106, studentId: 1, subjectId: "SE-1106", subjectName: "Introduction to Software Engineering", subjectCode: "SE 1106", teacherName: "Prof. Zerina Begum", teacherCode: "ZB", teacherContact: "+880 111222333", teacherEmail: "zb@du.ac.bd" },
-    { id: 107, studentId: 1, subjectId: "CSE-1101L", subjectName: "Structured Programming Lab", subjectCode: "CSE 1101L", teacherName: "Ahmedul Kabir + Nafis Fuad", teacherCode: "AK+MNF", teacherContact: "+880 555666777", teacherEmail: "ak.lab@du.ac.bd" }
-  ],
-  2: [
-    { id: 201, studentId: 2, subjectId: "CSE-101", subjectName: "Structured Programming", subjectCode: "CSE101 (C)", teacherName: "MMAK, MMFZ", teacherCode: "MMAK+MMFZ", teacherContact: "TBA", teacherEmail: "mmak@du.ac.bd" },
-    { id: 202, studentId: 2, subjectId: "PHY-129", subjectName: "Physics Theory", subjectCode: "PHY129 (C)", teacherName: "Physics Department Teacher", teacherCode: "PHY", teacherContact: "TBA", teacherEmail: "physics@du.ac.bd" },
-    { id: 203, studentId: 2, subjectId: "EEE-163", subjectName: "Electrical Engineering Theory", subjectCode: "EEE163 (C)", teacherName: "EEE Department Teacher", teacherCode: "EEE", teacherContact: "TBA", teacherEmail: "eee.dept@du.ac.bd" },
-    { id: 204, studentId: 2, subjectId: "EEE-164", subjectName: "Electrical Engineering Lab", subjectCode: "EEE164 (C1)", teacherName: "Teacher PEL / NCL", teacherCode: "PEL/NCL", teacherContact: "TBA", teacherEmail: "eee.lab@du.ac.bd" },
-    { id: 205, studentId: 2, subjectId: "PHY-114", subjectName: "Physics Lab", subjectCode: "PHY114 (C1)", teacherName: "Physics Lab Instructor", teacherCode: "PHY-Lab", teacherContact: "TBA", teacherEmail: "physlab@du.ac.bd" },
-    { id: 206, studentId: 2, subjectId: "MATH-141", subjectName: "Mathematics", subjectCode: "MATH141 (C)", teacherName: "Mathematics Instructor", teacherCode: "MATH", teacherContact: "TBA", teacherEmail: "math.dept@du.ac.bd" },
-    { id: 207, studentId: 2, subjectId: "CSE-103", subjectName: "Computer Science Course", subjectCode: "CSE103 (C)", teacherName: "MN, RZS", teacherCode: "MN+RZS", teacherContact: "TBA", teacherEmail: "cse103@du.ac.bd" },
-    { id: 208, studentId: 2, subjectId: "CSE-102", subjectName: "Computer Science Lab", subjectCode: "CSE102 (C1)", teacherName: "SAH/IRK, IMK, SSA", teacherCode: "SAH+IRK", teacherContact: "TBA", teacherEmail: "cselab@du.ac.bd" },
-    { id: 209, studentId: 2, subjectId: "CT", subjectName: "Class Test", subjectCode: "CT (C)", teacherName: "Invigilator Team", teacherCode: "CT", teacherContact: "N/A", teacherEmail: "ct.sec_c@du.ac.bd" }
-  ]
-};
-
-const MOCK_WEEKLY_SLOTS = {
-  1: [
-    { id: 1001, studentId: 1, courseId: 106, dayOfWeek: "SUNDAY", startTime: "10:00", endTime: "11:00", room: "107" },
-    { id: 1002, studentId: 1, courseId: 103, dayOfWeek: "SUNDAY", startTime: "11:00", endTime: "13:00", room: "107" },
-    { id: 1003, studentId: 1, courseId: 107, dayOfWeek: "SUNDAY", startTime: "14:00", endTime: "17:00", room: "305", group: "Group A" },
-    { id: 1004, studentId: 1, courseId: 105, dayOfWeek: "MONDAY", startTime: "09:00", endTime: "10:00", room: "107" },
-    { id: 1005, studentId: 1, courseId: 106, dayOfWeek: "MONDAY", startTime: "10:00", endTime: "12:00", room: "107" },
-    { id: 1006, studentId: 1, courseId: 101, dayOfWeek: "MONDAY", startTime: "12:00", endTime: "13:00", room: "107" },
-    { id: 1007, studentId: 1, courseId: 103, dayOfWeek: "TUESDAY", startTime: "10:00", endTime: "12:00", room: "107" },
-    { id: 1008, studentId: 1, courseId: 104, dayOfWeek: "TUESDAY", startTime: "12:00", endTime: "13:00", room: "107" },
-    { id: 1009, studentId: 1, courseId: 102, dayOfWeek: "TUESDAY", startTime: "14:00", endTime: "16:00", room: "105" },
-    { id: 1010, studentId: 1, courseId: 107, dayOfWeek: "WEDNESDAY", startTime: "10:00", endTime: "13:00", room: "305", group: "Group B" },
-    { id: 1011, studentId: 1, courseId: 102, dayOfWeek: "WEDNESDAY", startTime: "14:00", endTime: "16:00", room: "105" },
-    { id: 1012, studentId: 1, courseId: 105, dayOfWeek: "THURSDAY", startTime: "09:00", endTime: "11:00", room: "107" },
-    { id: 1013, studentId: 1, courseId: 104, dayOfWeek: "THURSDAY", startTime: "11:00", endTime: "13:00", room: "107" },
-    { id: 1014, studentId: 1, courseId: 101, dayOfWeek: "THURSDAY", startTime: "14:00", endTime: "16:00", room: "105" }
-  ],
-  2: [
-    { id: 2001, studentId: 2, courseId: 201, dayOfWeek: "SATURDAY", startTime: "08:00", endTime: "09:00", room: "107" },
-    { id: 2002, studentId: 2, courseId: 202, dayOfWeek: "SATURDAY", startTime: "09:00", endTime: "10:00", room: "107" },
-    { id: 2003, studentId: 2, courseId: 203, dayOfWeek: "SATURDAY", startTime: "10:00", endTime: "11:00", room: "107" },
-    { id: 2004, studentId: 2, courseId: 204, dayOfWeek: "SATURDAY", startTime: "11:00", endTime: "13:00", room: "EEE Lab", group: "C1" },
-    { id: 2005, studentId: 2, courseId: 205, dayOfWeek: "SATURDAY", startTime: "14:00", endTime: "17:00", room: "Physics Lab-1", group: "C1" },
-    { id: 2006, studentId: 2, courseId: 206, dayOfWeek: "SUNDAY", startTime: "10:00", endTime: "11:00", room: "107" },
-    { id: 2007, studentId: 2, courseId: 207, dayOfWeek: "SUNDAY", startTime: "11:00", endTime: "12:00", room: "107" },
-    { id: 2008, studentId: 2, courseId: 202, dayOfWeek: "SUNDAY", startTime: "12:00", endTime: "13:00", room: "107" },
-    { id: 2009, studentId: 2, courseId: 209, dayOfWeek: "MONDAY", startTime: "08:00", endTime: "09:00", room: "107" },
-    { id: 2010, studentId: 2, courseId: 206, dayOfWeek: "MONDAY", startTime: "10:00", endTime: "11:00", room: "107" },
-    { id: 2011, studentId: 2, courseId: 207, dayOfWeek: "MONDAY", startTime: "11:00", endTime: "12:00", room: "107" },
-    { id: 2012, studentId: 2, courseId: 201, dayOfWeek: "MONDAY", startTime: "12:00", endTime: "13:00", room: "107" },
-    { id: 2013, studentId: 2, courseId: 202, dayOfWeek: "TUESDAY", startTime: "09:00", endTime: "10:00", room: "107" },
-    { id: 2014, studentId: 2, courseId: 203, dayOfWeek: "TUESDAY", startTime: "10:00", endTime: "11:00", room: "107" },
-    { id: 2015, studentId: 2, courseId: 208, dayOfWeek: "TUESDAY", startTime: "11:00", endTime: "13:00", room: "VDAL", group: "C1" },
-    { id: 2016, studentId: 2, courseId: 209, dayOfWeek: "WEDNESDAY", startTime: "08:00", endTime: "09:00", room: "107" },
-    { id: 2017, studentId: 2, courseId: 203, dayOfWeek: "WEDNESDAY", startTime: "09:00", endTime: "10:00", room: "107" },
-    { id: 2018, studentId: 2, courseId: 206, dayOfWeek: "WEDNESDAY", startTime: "10:00", endTime: "11:00", room: "107" },
-    { id: 2019, studentId: 2, courseId: 207, dayOfWeek: "WEDNESDAY", startTime: "11:00", endTime: "12:00", room: "107" },
-    { id: 2020, studentId: 2, courseId: 201, dayOfWeek: "WEDNESDAY", startTime: "12:00", endTime: "13:00", room: "107" }
-  ]
-};
-
 export default function RoutineTracker() {
   // Mode selection & core states
   const [isDemoMode, setIsDemoMode] = useState(false);
@@ -101,9 +29,9 @@ export default function RoutineTracker() {
   const [currentDate, setCurrentDate] = useState<string>('');
   
   // Roster lists
-  const [students, setStudents] = useState<any[]>(MOCK_STUDENTS);
-  const [courses, setCourses] = useState<Record<number, any[]>>(MOCK_COURSES);
-  const [weeklySlots, setWeeklySlots] = useState<Record<number, any[]>>(MOCK_WEEKLY_SLOTS);
+  const [students, setStudents] = useState<any[]>([]);
+  const [courses, setCourses] = useState<Record<number, any[]>>({});
+  const [weeklySlots, setWeeklySlots] = useState<Record<number, any[]>>({});
   
   // Custom Local Storage state for Demo Mode overrides
   const [localOverrides, setLocalOverrides] = useState<any[]>([]);
@@ -198,12 +126,7 @@ export default function RoutineTracker() {
       if (storedStudents) {
         setStudents(JSON.parse(storedStudents));
       } else {
-        const initialMock = MOCK_STUDENTS.map(s => ({
-          ...s,
-          courseStartDate: s.id === 1 ? '2026-04-12' : '2026-01-01'
-        }));
-        setStudents(initialMock);
-        localStorage.setItem('routine_local_students', JSON.stringify(initialMock));
+        setStudents([]);
       }
     }
     
@@ -219,6 +142,30 @@ export default function RoutineTracker() {
         if (data && data.length > 0) {
           setStudents(data);
           setIsDemoMode(false);
+
+          // Fetch and group courses from DB
+          const coursesRes = await fetch('/api/courses');
+          if (coursesRes.ok) {
+            const coursesData = await coursesRes.json();
+            const coursesMap: Record<number, any[]> = {};
+            coursesData.forEach((c: any) => {
+              if (!coursesMap[c.studentId]) coursesMap[c.studentId] = [];
+              coursesMap[c.studentId].push(c);
+            });
+            setCourses(coursesMap);
+          }
+
+          // Fetch and group weekly slots from DB
+          const slotsRes = await fetch('/api/weekly-slots');
+          if (slotsRes.ok) {
+            const slotsData = await slotsRes.json();
+            const slotsMap: Record<number, any[]> = {};
+            slotsData.forEach((s: any) => {
+              if (!slotsMap[s.studentId]) slotsMap[s.studentId] = [];
+              slotsMap[s.studentId].push(s);
+            });
+            setWeeklySlots(slotsMap);
+          }
         } else {
           setIsDemoMode(true);
         }
@@ -323,7 +270,9 @@ export default function RoutineTracker() {
             group: slot.group,
             status: 'SCHEDULED',
             isExtra: false,
-            attendanceStatus: null as string | null
+            attendanceStatus: null as string | null,
+            studentId: student.id,
+            date: dateStr
           };
 
           if (override) {
@@ -371,7 +320,9 @@ export default function RoutineTracker() {
             group: extra.group,
             status: extra.status,
             isExtra: true,
-            attendanceStatus: null as string | null
+            attendanceStatus: null as string | null,
+            studentId: student.id,
+            date: dateStr
           };
 
           if (vacationType === 'VACATION') {
@@ -671,7 +622,7 @@ export default function RoutineTracker() {
         studentId: selectedStudentId,
         courseId: parseInt(overrideData.courseId),
         weeklySlotId: overrideData.weeklySlotId,
-        date: currentDate,
+        date: selectedClass.date,
         startTime: overrideData.startTime,
         endTime: overrideData.endTime,
         room: overrideData.room,
@@ -688,7 +639,7 @@ export default function RoutineTracker() {
         const updatedAtt = [...localAttendance, {
           studentId: selectedStudentId,
           courseId: parseInt(overrideData.courseId),
-          date: currentDate,
+          date: selectedClass.date,
           status: 'CANCELLED',
           weeklySlotId: overrideData.weeklySlotId,
           dailyClassId: newOverride.id
@@ -708,7 +659,7 @@ export default function RoutineTracker() {
             studentId: selectedStudentId,
             courseId: parseInt(overrideData.courseId),
             weeklySlotId: overrideData.weeklySlotId,
-            date: currentDate,
+            date: selectedClass.date,
             startTime: overrideData.startTime,
             endTime: overrideData.endTime,
             room: overrideData.room,
@@ -908,6 +859,7 @@ export default function RoutineTracker() {
         if (res.ok) {
           loadCalendarData();
           setShowAddSlotModal(false);
+          checkDatabaseConnection();
         }
       } catch (err) {
         console.error(err);
@@ -959,6 +911,7 @@ export default function RoutineTracker() {
         const res = await fetch(`/api/weekly-slots?id=${slotId}`, { method: 'DELETE' });
         if (res.ok) {
           loadCalendarData();
+          checkDatabaseConnection();
         }
       } catch (err) {
         console.error(err);
@@ -1078,6 +1031,7 @@ export default function RoutineTracker() {
           setVacationData={setVacationData}
           setShowVacationModal={setShowVacationModal}
           getReadableDate={getReadableDate}
+          toggleAttendance={toggleAttendance}
         />
       )}
 
@@ -1114,12 +1068,15 @@ export default function RoutineTracker() {
       {/* ========================================================================
           Interactive Modal Overlays
           ======================================================================== */}
-      <SubjectModal 
-        selectedClass={selectedClass}
-        setShowSubjectModal={setShowSubjectModal}
-        setOverrideData={setOverrideData}
-        setShowOverrideModal={setShowOverrideModal}
-      />
+      {showSubjectModal && (
+        <SubjectModal 
+          selectedClass={selectedClass}
+          setShowSubjectModal={setShowSubjectModal}
+          setOverrideData={setOverrideData}
+          setShowOverrideModal={setShowOverrideModal}
+          toggleAttendance={toggleAttendance}
+        />
+      )}
 
       {showOverrideModal && (
         <OverrideModal 
