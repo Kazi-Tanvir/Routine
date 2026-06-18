@@ -25,8 +25,8 @@ export default function AnalyticsView({
 }: AnalyticsViewProps) {
   return (
     <div className="wobbly-box" style={{ background: '#ffffff', padding: '2rem' }}>
-      <div className="flex-between mb-4">
-        <div className="flex-row">
+      <div className="analytics-header mb-4 mobile-stack">
+        <div className="flex-row flex-wrap mobile-stack" style={{ gap: '0.8rem' }}>
           <h2 className="sketchy-heading" style={{ fontSize: '1.5rem' }}>📊 Attendance Statistics</h2>
           <select 
             value={selectedStudentId} 
@@ -41,7 +41,7 @@ export default function AnalyticsView({
         </div>
 
         {/* Custom period query form */}
-        <form onSubmit={handleCalculateCustom} className="flex-row wobbly-box" style={{ padding: '0.4rem 1rem', background: '#f7fafc', boxShadow: 'none' }}>
+        <form onSubmit={handleCalculateCustom} className="range-picker-form wobbly-box mobile-stack" style={{ padding: '0.4rem 1rem', background: '#f7fafc', boxShadow: 'none' }}>
           <span className="handwritten" style={{ fontSize: '1.1rem' }}>From:</span>
           <input 
             type="date" 
@@ -67,7 +67,7 @@ export default function AnalyticsView({
       {analyticsData ? (
         <div>
           {/* Overall stats widgets */}
-          <div className="grid-cols-2 mb-4" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
+          <div className="analytics-summary-grid mb-4">
             <div className="wobbly-box" style={{ padding: '1rem', textAlign: 'center' }}>
               <p className="handwritten" style={{ fontSize: '1.1rem' }}>Overall Percentage</p>
               <p className="sketchy-heading" style={{ fontSize: '1.8rem', color: '#2f855a' }}>
@@ -91,41 +91,43 @@ export default function AnalyticsView({
           {/* Subject Breakdown List */}
           <div className="wobbly-box" style={{ padding: '1.5rem' }}>
             <h3 className="sketchy-heading mb-4" style={{ fontSize: '1.2rem' }}>📚 Attendance Per Subject</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-              <thead>
-                <tr style={{ borderBottom: '2px solid var(--ink-charcoal)' }}>
-                  <th style={{ padding: '0.6rem 0.4rem', fontFamily: 'var(--font-sketch)' }}>Code</th>
-                  <th style={{ padding: '0.6rem 0.4rem', fontFamily: 'var(--font-sketch)' }}>Subject Name</th>
-                  <th style={{ padding: '0.6rem 0.4rem', fontFamily: 'var(--font-sketch)' }}>Classes Held</th>
-                  <th style={{ padding: '0.6rem 0.4rem', fontFamily: 'var(--font-sketch)' }}>Attended</th>
-                  <th style={{ padding: '0.6rem 0.4rem', fontFamily: 'var(--font-sketch)' }}>Absent</th>
-                  <th style={{ padding: '0.6rem 0.4rem', fontFamily: 'var(--font-sketch)' }}>Rate</th>
-                </tr>
-              </thead>
-              <tbody>
-                {analyticsData.subjects.map((s: any) => (
-                  <tr key={s.courseId} style={{ borderBottom: '1px dashed #cbd5e0' }}>
-                    <td style={{ padding: '0.8rem 0.4rem', fontWeight: 'bold' }}>{s.subjectCode}</td>
-                    <td style={{ padding: '0.8rem 0.4rem' }} className="handwritten">{s.subjectName}</td>
-                    <td style={{ padding: '0.8rem 0.4rem' }}>{s.held}</td>
-                    <td style={{ padding: '0.8rem 0.4rem', color: '#2b6cb0' }}>{s.present}</td>
-                    <td style={{ padding: '0.8rem 0.4rem', color: '#c53030' }}>{s.absent}</td>
-                    <td style={{ padding: '0.8rem 0.4rem' }}>
-                      <span 
-                        className="highlight-green handwritten" 
-                        style={{ 
-                          fontSize: '1.1rem', 
-                          fontWeight: 'bold',
-                          backgroundColor: s.percentage < 75 ? 'rgba(254, 202, 202, 0.6)' : 'rgba(187, 247, 208, 0.6)'
-                        }}
-                      >
-                        {s.percentage}%
-                      </span>
-                    </td>
+            <div style={{ overflowX: 'auto', width: '100%' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '550px' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid var(--ink-charcoal)' }}>
+                    <th style={{ padding: '0.6rem 0.4rem', fontFamily: 'var(--font-sketch)' }}>Code</th>
+                    <th style={{ padding: '0.6rem 0.4rem', fontFamily: 'var(--font-sketch)' }}>Subject Name</th>
+                    <th style={{ padding: '0.6rem 0.4rem', fontFamily: 'var(--font-sketch)' }}>Classes Held</th>
+                    <th style={{ padding: '0.6rem 0.4rem', fontFamily: 'var(--font-sketch)' }}>Attended</th>
+                    <th style={{ padding: '0.6rem 0.4rem', fontFamily: 'var(--font-sketch)' }}>Absent</th>
+                    <th style={{ padding: '0.6rem 0.4rem', fontFamily: 'var(--font-sketch)' }}>Rate</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {analyticsData.subjects.map((s: any) => (
+                    <tr key={s.courseId} style={{ borderBottom: '1px dashed #cbd5e0' }}>
+                      <td style={{ padding: '0.8rem 0.4rem', fontWeight: 'bold' }}>{s.subjectCode}</td>
+                      <td style={{ padding: '0.8rem 0.4rem' }} className="handwritten">{s.subjectName}</td>
+                      <td style={{ padding: '0.8rem 0.4rem' }}>{s.held}</td>
+                      <td style={{ padding: '0.8rem 0.4rem', color: '#2b6cb0' }}>{s.present}</td>
+                      <td style={{ padding: '0.8rem 0.4rem', color: '#c53030' }}>{s.absent}</td>
+                      <td style={{ padding: '0.8rem 0.4rem' }}>
+                        <span 
+                          className="highlight-green handwritten" 
+                          style={{ 
+                            fontSize: '1.1rem', 
+                            fontWeight: 'bold',
+                            backgroundColor: s.percentage < 75 ? 'rgba(254, 202, 202, 0.6)' : 'rgba(187, 247, 208, 0.6)'
+                          }}
+                        >
+                          {s.percentage}%
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       ) : (

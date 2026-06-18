@@ -37,33 +37,33 @@ export default function SetupView({
 
   return (
     <div className="wobbly-box" style={{ background: '#ffffff', padding: '2rem' }}>
-      <div className="flex-between mb-4">
-        <div className="flex-row" style={{ flexWrap: 'wrap' }}>
-          <div className="flex-row">
+      <div className="flex-between mb-4 flex-wrap mobile-stack" style={{ gap: '1.2rem' }}>
+        <div className="flex-row flex-wrap mobile-stack" style={{ gap: '1rem' }}>
+          <div className="flex-row flex-wrap mobile-stack" style={{ gap: '0.5rem' }}>
             <h2 className="sketchy-heading" style={{ fontSize: '1.5rem' }}>⚙ Setup Course Timetables</h2>
             <select 
               value={selectedStudentId} 
               onChange={(e) => setSelectedStudentId(parseInt(e.target.value))}
               className="wobbly-input" 
-              style={{ width: '250px', padding: '0.3rem 0.5rem', fontSize: '1.2rem' }}
+              style={{ width: '100%', maxWidth: '250px', padding: '0.3rem 0.5rem', fontSize: '1.2rem' }}
             >
               {students.map(s => (
                 <option key={s.id} value={s.id}>{s.name}</option>
               ))}
             </select>
           </div>
-          <div className="flex-row" style={{ marginLeft: '1.5rem' }}>
+          <div className="flex-row flex-wrap mobile-stack" style={{ gap: '0.5rem' }}>
             <span className="handwritten" style={{ fontSize: '1.2rem' }}>Course Start Date:</span>
             <input 
               type="date" 
               value={courseStartDate} 
               onChange={(e) => handleUpdateStartDate(selectedStudentId, e.target.value)}
               className="wobbly-input" 
-              style={{ width: '180px', padding: '0.2rem 0.5rem', fontSize: '1.1rem' }}
+              style={{ width: '100%', maxWidth: '180px', padding: '0.2rem 0.5rem', fontSize: '1.1rem' }}
             />
           </div>
         </div>
-        <div className="flex-row">
+        <div className="flex-row flex-wrap mobile-stack" style={{ gap: '0.8rem' }}>
           <button 
             onClick={() => {
               setCourseFormData({ id: '', subjectId: '', subjectName: '', subjectCode: '', teacherName: '', teacherCode: '', teacherContact: '', teacherEmail: '' });

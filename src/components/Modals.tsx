@@ -559,3 +559,163 @@ export function SlotModal({
     </div>
   );
 }
+
+// ============================================================================
+// 6. CUSTOM / EXTRA CLASS CRUD MODAL
+// ============================================================================
+interface CustomClassModalProps {
+  students: any[];
+  courses: Record<number, any[]>;
+  customClassFormData: {
+    studentId: string;
+    courseId: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    room: string;
+    group: string;
+  };
+  setCustomClassFormData: (data: any) => void;
+  handleSaveCustomClass: (e: React.FormEvent) => void;
+  setShowCustomClassModal: (show: boolean) => void;
+}
+
+export function CustomClassModal({
+  students,
+  courses,
+  customClassFormData,
+  setCustomClassFormData,
+  handleSaveCustomClass,
+  setShowCustomClassModal
+}: CustomClassModalProps) {
+  const currentStudentId = parseInt(customClassFormData.studentId) || (students.length > 0 ? students[0].id : 1);
+  const studentCourses = courses[currentStudentId] || [];
+
+  return (
+    <div className="paper-modal-overlay" onClick={() => setShowCustomClassModal(false)}>
+      <div className="paper-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={() => setShowCustomClassModal(false)}><X /></button>
+        <div className="tape-decor"></div>
+
+        <h2 className="sketchy-heading" style={{ fontSize: '1.4rem', marginBottom: '1.2rem' }}>
+          ➕ Add Custom Class Session
+        </h2>
+
+        <form onSubmit={handleSaveCustomClass} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div>
+            <label className="sketchy-heading" style={{ fontSize: '0.8rem', display: 'block', marginBottom: '0.2rem' }}>Select Student</label>
+            <select 
+              value={customClassFormData.studentId} 
+              onChange={(e) => {
+                const newStudentId = e.target.value;
+                const nextCourses = courses[parseInt(newStudentId)] || [];
+                const defaultCourseId = nextCourses.length > 0 ? String(nextCourses[0].id) : '';
+                setCustomClassFormData({ 
+                  ...customClassFormData, 
+                  studentId: newStudentId,
+                  courseId: defaultCourseId
+                });
+              }}
+              className="wobbly-input"
+              style={{ padding: '0.4rem' }}
+              required
+            >
+              {students.map(s => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="sketchy-heading" style={{ fontSize: '0.8rem', display: 'block', marginBottom: '0.2rem' }}>Select Subject</label>
+            {studentCourses.length === 0 ? (
+              <div style={{ color: '#c53030', fontFamily: 'var(--font-hand)', fontSize: '1.2rem', padding: '0.5rem 0' }}>
+                ⚠️ No courses found for this student. Add courses in Setup tab first!
+              </div>
+            ) : (
+              <select 
+                value={customClassFormData.courseId} 
+                onChange={(e) => setCustomClassFormData({ ...customClassFormData, courseId: e.target.value })}
+                className="wobbly-input"
+                style={{ padding: '0.4rem' }}
+                required
+              >
+                {studentCourses.map(c => (
+                  <option key={c.id} value={c.id}>{c.subjectCode} - {c.subjectName}</option>
+                ))}
+              </select>
+            )}
+          </div>
+
+          <div>
+            <label className="sketchy-heading" style={{ fontSize: '0.8rem', display: 'block', marginBottom: '0.2rem' }}>Date</label>
+            <input 
+              type="date" 
+              value={customClassFormData.date} 
+              onChange={(e) => setCustomClassFormData({ ...customClassFormData, date: e.target.value })}
+              className="wobbly-input" 
+              required 
+            />
+          </div>
+
+          <div className="grid-cols-2">
+            <div>
+              <label className="sketchy-heading" style={{ fontSize: '0.8rem', display: 'block', marginBottom: '0.2rem' }}>Start Time</label>
+              <input 
+                type="time" 
+                value={customClassFormData.startTime} 
+                onChange={(e) => setCustomClassFormData({ ...customClassFormData, startTime: e.target.value })}
+                className="wobbly-input" 
+                required 
+              />
+            </div>
+            <div>
+              <label className="sketchy-heading" style={{ fontSize: '0.8rem', display: 'block', marginBottom: '0.2rem' }}>End Time</label>
+              <input 
+                type="time" 
+                value={customClassFormData.endTime} 
+                onChange={(e) => setCustomClassFormData({ ...customClassFormData, endTime: e.target.value })}
+                className="wobbly-input" 
+                required 
+              />
+            </div>
+          </div>
+
+          <div className="grid-cols-2">
+            <div>
+              <label className="sketchy-heading" style={{ fontSize: '0.8rem', display: 'block', marginBottom: '0.2rem' }}>Room</label>
+              <input 
+                type="text" 
+                value={customClassFormData.room} 
+                onChange={(e) => setCustomClassFormData({ ...customClassFormData, room: e.target.value })}
+                placeholder="e.g. 107"
+                className="wobbly-input" 
+              />
+            </div>
+            <div>
+              <label className="sketchy-heading" style={{ fontSize: '0.8rem', display: 'block', marginBottom: '0.2rem' }}>Group</label>
+              <input 
+                type="text" 
+                value={customClassFormData.group} 
+                onChange={(e) => setCustomClassFormData({ ...customClassFormData, group: e.target.value })}
+                placeholder="e.g. Group A / C1"
+                className="wobbly-input" 
+              />
+            </div>
+          </div>
+
+          <div className="flex-row mt-4" style={{ justifyContent: 'flex-end' }}>
+            <button 
+              type="submit" 
+              className="sketchy-btn sketchy-btn-accent"
+              disabled={studentCourses.length === 0}
+            >
+              Add Class
+            </button>
+            <button type="button" onClick={() => setShowCustomClassModal(false)} className="sketchy-btn">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

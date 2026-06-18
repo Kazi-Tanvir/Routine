@@ -19,6 +19,7 @@ interface CalendarViewProps {
   setShowVacationModal: (show: boolean) => void;
   getReadableDate: (dateStr: string) => string;
   toggleAttendance: (studentId: number, classItem: any, date: string, status: string) => void;
+  openCustomClassModal: (studentId: number, dateStr?: string) => void;
 }
 
 // Helper to convert time "HH:MM" to decimal hours (e.g. "10:30" -> 10.5)
@@ -50,7 +51,8 @@ export default function CalendarView({
   setVacationData,
   setShowVacationModal,
   getReadableDate,
-  toggleAttendance
+  toggleAttendance,
+  openCustomClassModal
 }: CalendarViewProps) {
 
   const activeStudent = students.find(s => s.id === selectedStudentId);
@@ -82,10 +84,10 @@ export default function CalendarView({
   return (
     <div className="wobbly-box" style={{ background: '#ffffff', padding: '1.5rem' }}>
       {/* Top Header controls */}
-      <div className="flex-between mb-4 flex-wrap" style={{ gap: '1rem' }}>
-        <div className="flex-row">
+      <div className="flex-between mb-4 flex-wrap mobile-stack" style={{ gap: '1rem' }}>
+        <div className="flex-row flex-wrap mobile-stack" style={{ gap: '0.5rem' }}>
           <h2 className="sketchy-heading" style={{ fontSize: '1.5rem' }}>📅 Interactive Routine</h2>
-          <div style={{ display: 'flex', border: '2px solid var(--ink-charcoal)', borderRadius: '8px', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', border: '2px solid var(--ink-charcoal)', borderRadius: '8px', overflow: 'hidden', width: '100%', maxWidth: '250px' }}>
             {students.map(s => (
               <button 
                 key={s.id}
@@ -99,7 +101,8 @@ export default function CalendarView({
                   backgroundColor: selectedStudentId === s.id ? s.color : '#e2dcd5',
                   color: selectedStudentId === s.id ? 'white' : 'black',
                   fontWeight: selectedStudentId === s.id ? 'bold' : 'normal',
-                  padding: '0.4rem 1.2rem'
+                  padding: '0.4rem 1.2rem',
+                  flex: 1
                 }}
               >
                 {s.name}
@@ -109,7 +112,7 @@ export default function CalendarView({
         </div>
 
         {/* View mode filter, log vacation button, and navigators */}
-        <div className="flex-row flex-wrap" style={{ gap: '0.8rem' }}>
+        <div className="flex-row flex-wrap mobile-stack" style={{ gap: '0.8rem' }}>
           <button 
             onClick={() => {
               setVacationData({ date: currentDate, endDate: '', type: 'VACATION', description: '' });
@@ -120,7 +123,14 @@ export default function CalendarView({
             <Plus size={14} /> Log Vacation Range
           </button>
 
-          <div style={{ display: 'flex', border: '2px solid var(--ink-charcoal)', borderRadius: '8px', overflow: 'hidden' }}>
+          <button 
+            onClick={() => openCustomClassModal(selectedStudentId, viewDate)}
+            className="sketchy-btn sketchy-btn-accent"
+          >
+            <Plus size={14} /> Add Custom Class
+          </button>
+
+          <div style={{ display: 'flex', border: '2px solid var(--ink-charcoal)', borderRadius: '8px', overflow: 'hidden', width: '100%', maxWidth: '280px' }}>
             {(['daily', 'weekly', 'monthly'] as const).map(mode => (
               <button
                 key={mode}
@@ -132,7 +142,8 @@ export default function CalendarView({
                   cursor: 'pointer',
                   fontSize: '1.1rem',
                   backgroundColor: calendarMode === mode ? '#fef08a' : 'white',
-                  fontWeight: calendarMode === mode ? 'bold' : 'normal'
+                  fontWeight: calendarMode === mode ? 'bold' : 'normal',
+                  flex: 1
                 }}
               >
                 {mode.charAt(0).toUpperCase() + mode.slice(1)}
@@ -140,7 +151,7 @@ export default function CalendarView({
             ))}
           </div>
 
-          <div className="flex-row">
+          <div className="flex-row flex-wrap" style={{ gap: '0.5rem', justifyContent: 'center' }}>
             <button 
               onClick={() => {
                 const prev = new Date(viewDate);
@@ -176,118 +187,126 @@ export default function CalendarView({
           MODE A: GOOGLE CALENDAR WEEKLY VIEW
           ======================================================================== */}
       {calendarMode === 'weekly' && calendarData[selectedStudentId] && (
-        <div className="gcal-weekly-container">
-          {/* Header Row: time label and 7 days headings */}
-          <div className="gcal-weekly-header">
-            <div className="gcal-time-header">Time</div>
-            {Object.keys(calendarData[selectedStudentId].dates).map(dateKey => {
-              const dData = calendarData[selectedStudentId].dates[dateKey];
-              const isToday = dateKey === currentDate;
-              return (
-                <div 
-                  key={dateKey} 
-                  className="gcal-header-cell"
-                  style={isToday ? { backgroundColor: '#fef08a', fontWeight: 'bold' } : {}}
-                >
-                  <div>{dData.dayName.substring(0, 3)}</div>
-                  <div style={{ fontSize: '1.1rem', marginTop: '0.1rem' }}>{dateKey.split('-')[2]}</div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* All day row (for vacations/absent day flags) */}
-          <div className="gcal-all-day-row">
-            <div className="gcal-time-header" style={{ fontSize: '0.65rem' }}>All Day</div>
-            {Object.keys(calendarData[selectedStudentId].dates).map(dateKey => {
-              const dData = calendarData[selectedStudentId].dates[dateKey];
-              return (
-                <div key={dateKey} className="gcal-all-day-cell">
-                  {dData.vacationType === 'VACATION' && (
-                    <span className="gcal-all-day-badge class-status-cancelled">🌴 Vacation</span>
-                  )}
-                  {dData.vacationType === 'ABSENT_DAY' && (
-                    <span className="gcal-all-day-badge class-status-absent">🤒 Sick Day</span>
-                  )}
-                  {!dData.vacationType && <span style={{ color: '#e2e8f0' }}>-</span>}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Scrollable grid timeline body */}
-          <div className="gcal-grid-scroll">
-            <div className="gcal-weekly-grid">
-              
-              {/* Horizontal line indicators backdrops */}
-              <div className="gcal-grid-lines-container">
-                {hours.map(h => (
-                  <div key={h} className="gcal-grid-line"></div>
-                ))}
-              </div>
-
-              {/* Hours axis column */}
-              <div className="gcal-time-col">
-                {hours.map(h => (
-                  <div key={h} className="gcal-time-slot">
-                    {formatHourLabel(h)}
-                  </div>
-                ))}
-              </div>
-
-              {/* 7 Days Columns */}
+        <div className="scrollable-x-container">
+          <div className="gcal-weekly-container" style={{ minWidth: '800px' }}>
+            {/* Header Row: time label and 7 days headings */}
+            <div className="gcal-weekly-header">
+              <div className="gcal-time-header">Time</div>
               {Object.keys(calendarData[selectedStudentId].dates).map(dateKey => {
-                const dayData = calendarData[selectedStudentId].dates[dateKey];
+                const dData = calendarData[selectedStudentId].dates[dateKey];
                 const isToday = dateKey === currentDate;
-
-                let colClass = "gcal-day-column";
-                if (isToday) colClass += " today";
-                if (dayData.vacationType) colClass += " vacation-column";
-
                 return (
-                  <div key={dateKey} className={colClass}>
-                    
-                    {/* Render event cards absolute inside the column if not vacation */}
-                    {!dayData.vacationType && dayData.classes.map((c: any) => {
-                      const decimalStart = timeToDecimal(c.startTime);
-                      const decimalEnd = timeToDecimal(c.endTime);
-
-                      // Calculate absolute offsets (Assuming 60px height per hour, grid starts at 8.0)
-                      const topOffset = (decimalStart - START_HOUR) * 60;
-                      const height = (decimalEnd - decimalStart) * 60;
-
-                      // Skip rendering if class falls completely outside bounds
-                      if (topOffset < 0 || height <= 0) return null;
-
-                      const customStyle = getEventCardStyle(c);
-
-                      return (
-                        <div
-                          key={c.id}
-                          onClick={() => {
-                            setSelectedClass(c);
-                            setShowSubjectModal(true);
-                          }}
-                          className="gcal-event-card"
-                          style={{
-                            top: `${topOffset}px`,
-                            height: `${height}px`,
-                            ...customStyle
-                          }}
-                        >
-                          <div className="gcal-event-title">{c.course.subjectCode}</div>
-                          {height > 40 && <div className="gcal-event-desc">{c.course.subjectName}</div>}
-                          {height > 60 && (
-                            <div className="gcal-event-meta">
-                              <span className="flex-row" style={{ fontSize: '0.65rem' }}><MapPin size={8} /> Room {c.room || 'TBA'}</span>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                  <div 
+                    key={dateKey} 
+                    className="gcal-header-cell"
+                    style={isToday ? { backgroundColor: '#fef08a', fontWeight: 'bold' } : {}}
+                  >
+                    <div>{dData.dayName.substring(0, 3)}</div>
+                    <div style={{ fontSize: '1.1rem', marginTop: '0.1rem' }}>{dateKey.split('-')[2]}</div>
                   </div>
                 );
               })}
+            </div>
+
+            {/* All day row (for vacations/absent day flags) */}
+            <div className="gcal-all-day-row">
+              <div className="gcal-time-header" style={{ fontSize: '0.65rem' }}>All Day</div>
+              {Object.keys(calendarData[selectedStudentId].dates).map(dateKey => {
+                const dData = calendarData[selectedStudentId].dates[dateKey];
+                return (
+                  <div key={dateKey} className="gcal-all-day-cell">
+                    {dData.vacationType === 'VACATION' && (
+                      <span className="gcal-all-day-badge class-status-cancelled">🌴 Vacation</span>
+                    )}
+                    {dData.vacationType === 'ABSENT_DAY' && (
+                      <span className="gcal-all-day-badge class-status-absent">🤒 Sick Day</span>
+                    )}
+                    {!dData.vacationType && <span style={{ color: '#e2e8f0' }}>-</span>}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Scrollable grid timeline body */}
+            <div className="gcal-grid-scroll">
+              <div className="gcal-weekly-grid">
+                
+                {/* Horizontal line indicators backdrops */}
+                <div className="gcal-grid-lines-container">
+                  {hours.map(h => (
+                    <div key={h} className="gcal-grid-line"></div>
+                  ))}
+                </div>
+
+                {/* Hours axis column */}
+                <div className="gcal-time-col">
+                  {hours.map(h => (
+                    <div key={h} className="gcal-time-slot">
+                      {formatHourLabel(h)}
+                    </div>
+                  ))}
+                </div>
+
+                {/* 7 Days Columns */}
+                {Object.keys(calendarData[selectedStudentId].dates).map(dateKey => {
+                  const dayData = calendarData[selectedStudentId].dates[dateKey];
+                  const isToday = dateKey === currentDate;
+
+                  let colClass = "gcal-day-column";
+                  if (isToday) colClass += " today";
+                  if (dayData.vacationType) colClass += " vacation-column";
+
+                  return (
+                    <div 
+                      key={dateKey} 
+                      className={colClass}
+                      onClick={() => openCustomClassModal(selectedStudentId, dateKey)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      
+                      {/* Render event cards absolute inside the column if not vacation */}
+                      {!dayData.vacationType && dayData.classes.map((c: any) => {
+                        const decimalStart = timeToDecimal(c.startTime);
+                        const decimalEnd = timeToDecimal(c.endTime);
+
+                        // Calculate absolute offsets (Assuming 60px height per hour, grid starts at 8.0)
+                        const topOffset = (decimalStart - START_HOUR) * 60;
+                        const height = (decimalEnd - decimalStart) * 60;
+
+                        // Skip rendering if class falls completely outside bounds
+                        if (topOffset < 0 || height <= 0) return null;
+
+                        const customStyle = getEventCardStyle(c);
+
+                        return (
+                          <div
+                            key={c.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedClass(c);
+                              setShowSubjectModal(true);
+                            }}
+                            className="gcal-event-card"
+                            style={{
+                              top: `${topOffset}px`,
+                              height: `${height}px`,
+                              ...customStyle
+                            }}
+                          >
+                            <div className="gcal-event-title">{c.course.subjectCode}</div>
+                            {height > 40 && <div className="gcal-event-desc">{c.course.subjectName}</div>}
+                            {height > 60 && (
+                              <div className="gcal-event-meta">
+                                <span className="flex-row" style={{ fontSize: '0.65rem' }}><MapPin size={8} /> Room {c.room || 'TBA'}</span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -297,75 +316,91 @@ export default function CalendarView({
           MODE B: GOOGLE CALENDAR MONTHLY VIEW
           ======================================================================== */}
       {calendarMode === 'monthly' && calendarData[selectedStudentId] && (
-        <div className="gcal-month-grid">
-          {/* Weekday headers */}
-          {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map(day => (
-            <div 
-              key={day} 
-              className="calendar-day-header"
-              style={{ padding: '0.5rem', fontWeight: 'bold' }}
-            >
-              {day}
-            </div>
-          ))}
-
-          {/* Month grid cells */}
-          {Object.keys(calendarData[selectedStudentId].dates).map(dateKey => {
-            const dayData = calendarData[selectedStudentId].dates[dateKey];
-            const isToday = dateKey === currentDate;
-            const dateNum = dateKey.split('-')[2];
-
-            let cellClass = "gcal-month-cell";
-            if (isToday) cellClass += " today";
-            if (dayData.vacationType === 'VACATION') cellClass += " vacation-day";
-            if (dayData.vacationType === 'ABSENT_DAY') cellClass += " absent-day";
-
-            return (
-              <div key={dateKey} className={cellClass}>
-                {/* Date header */}
-                <div className="gcal-month-date">
-                  <span className={isToday ? "gcal-month-date today-badge" : ""}>
-                    {dateNum}
-                  </span>
-                </div>
-
-                {/* Shaded holiday banner */}
-                {dayData.vacationType === 'VACATION' && (
-                  <div className="gcal-month-event-chip class-status-cancelled" style={{ textAlign: 'center', cursor: 'default' }}>
-                    🌴 Vacation
-                  </div>
-                )}
-
-                {dayData.vacationType === 'ABSENT_DAY' && (
-                  <div className="gcal-month-event-chip class-status-absent" style={{ textAlign: 'center', cursor: 'default' }}>
-                    🤒 Sick Day
-                  </div>
-                )}
-
-                {/* Stack of horizontal event chips */}
-                {!dayData.vacationType && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', overflow: 'hidden' }}>
-                    {dayData.classes.map((c: any) => {
-                      const chipStyle = getEventCardStyle(c);
-                      return (
-                        <div
-                          key={c.id}
-                          onClick={() => {
-                            setSelectedClass(c);
-                            setShowSubjectModal(true);
-                          }}
-                          className="gcal-month-event-chip"
-                          style={chipStyle}
-                        >
-                          {c.startTime} {c.course.subjectCode}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+        <div className="scrollable-x-container">
+          <div className="gcal-month-grid" style={{ minWidth: '750px' }}>
+            {/* Weekday headers */}
+            {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map(day => (
+              <div 
+                key={day} 
+                className="calendar-day-header"
+                style={{ padding: '0.5rem', fontWeight: 'bold' }}
+              >
+                {day}
               </div>
-            );
-          })}
+            ))}
+
+            {/* Month grid cells */}
+            {Object.keys(calendarData[selectedStudentId].dates).map(dateKey => {
+              const dayData = calendarData[selectedStudentId].dates[dateKey];
+              const isToday = dateKey === currentDate;
+              const dateNum = dateKey.split('-')[2];
+
+              let cellClass = "gcal-month-cell";
+              if (isToday) cellClass += " today";
+              if (dayData.vacationType === 'VACATION') cellClass += " vacation-day";
+              if (dayData.vacationType === 'ABSENT_DAY') cellClass += " absent-day";
+
+              return (
+                <div 
+                  key={dateKey} 
+                  className={cellClass}
+                  onClick={() => openCustomClassModal(selectedStudentId, dateKey)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {/* Date header */}
+                  <div className="gcal-month-date">
+                    <span className={isToday ? "gcal-month-date today-badge" : ""}>
+                      {dateNum}
+                    </span>
+                  </div>
+
+                  {/* Shaded holiday banner */}
+                  {dayData.vacationType === 'VACATION' && (
+                    <div 
+                      onClick={(e) => e.stopPropagation()}
+                      className="gcal-month-event-chip class-status-cancelled" 
+                      style={{ textAlign: 'center', cursor: 'default' }}
+                    >
+                      🌴 Vacation
+                    </div>
+                  )}
+
+                  {dayData.vacationType === 'ABSENT_DAY' && (
+                    <div 
+                      onClick={(e) => e.stopPropagation()}
+                      className="gcal-month-event-chip class-status-absent" 
+                      style={{ textAlign: 'center', cursor: 'default' }}
+                    >
+                      🤒 Sick Day
+                    </div>
+                  )}
+
+                  {/* Stack of horizontal event chips */}
+                  {!dayData.vacationType && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', overflow: 'hidden' }}>
+                      {dayData.classes.map((c: any) => {
+                        const chipStyle = getEventCardStyle(c);
+                        return (
+                          <div
+                            key={c.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedClass(c);
+                              setShowSubjectModal(true);
+                            }}
+                            className="gcal-month-event-chip"
+                            style={chipStyle}
+                          >
+                            {c.startTime} {c.course.subjectCode}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
@@ -380,10 +415,17 @@ export default function CalendarView({
 
             return (
               <div key={dateKey}>
-                <div className="flex-between mb-4">
+                <div className="flex-between mb-4 flex-wrap" style={{ gap: '0.8rem' }}>
                   <h3 className="sketchy-heading" style={{ fontSize: '1.2rem' }}>
                     📋 Class Log List for {getReadableDate(dateKey)}
                   </h3>
+                  <button 
+                    onClick={() => openCustomClassModal(selectedStudentId, dateKey)}
+                    className="sketchy-btn sketchy-btn-accent"
+                    style={{ fontSize: '0.8rem', padding: '0.2rem 0.5rem', boxShadow: '1.5px 2px 0px var(--ink-charcoal)' }}
+                  >
+                    + Add Custom Class
+                  </button>
                 </div>
 
                 {dayData.vacationType === 'VACATION' ? (

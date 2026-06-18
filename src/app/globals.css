@@ -31,6 +31,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* Custom Scrollbar for Sketchy Theme */
@@ -459,7 +461,80 @@ body {
 .mb-4 { margin-bottom: 1rem; }
 .p-2 { padding: 0.5rem; }
 
+/* -------------------------------------------------------------
+   Responsive Helpers & Layouts
+   ------------------------------------------------------------- */
+
+.main-title-sheet {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 2.5rem;
+  gap: 1.5rem;
+}
+
+.nav-tabs-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: center;
+}
+
+.responsive-flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.scrollable-x-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+}
+
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.range-picker-form {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.analytics-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
 /* Responsive break for small screens */
+@media (max-width: 1024px) {
+  .main-title-sheet {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    padding: 1.2rem 1.5rem;
+  }
+  .analytics-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .analytics-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 900px) {
   body {
     padding: 0.5rem;
@@ -485,6 +560,56 @@ body {
   .calendar-cell {
     min-height: auto;
     border-right: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .responsive-flex-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-tabs-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
+    gap: 0.5rem;
+  }
+  .nav-tabs-container button {
+    width: 100%;
+    font-size: 0.8rem;
+    justify-content: center;
+    padding: 0.4rem 0.6rem;
+  }
+  .range-picker-form {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  .range-picker-form input {
+    width: 100% !important;
+  }
+  .range-picker-form button {
+    width: 100%;
+  }
+  .mobile-stack {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+  .mobile-stack > * {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+@media (max-width: 500px) {
+  .analytics-summary-grid {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -14,6 +14,7 @@ interface DashboardViewProps {
   setSelectedClass: (classItem: any) => void;
   setShowSubjectModal: (show: boolean) => void;
   analyticsData: any;
+  openCustomClassModal: (studentId: number, dateStr?: string) => void;
 }
 
 export default function DashboardView({
@@ -26,7 +27,8 @@ export default function DashboardView({
   toggleAttendance,
   setSelectedClass,
   setShowSubjectModal,
-  analyticsData
+  analyticsData,
+  openCustomClassModal
 }: DashboardViewProps) {
   return (
     <div className="notebook-binder">
@@ -34,21 +36,31 @@ export default function DashboardView({
       <div className="notebook-page paper-lined">
         <div className="tape-decor"></div>
         
-        <div className="flex-between mb-4">
+        <div className="flex-between mb-4 flex-wrap mobile-stack" style={{ gap: '0.8rem' }}>
           <div>
             <span className="highlight-yellow handwritten" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>BSSE 18th Year 1</span>
             <h2 className="sketchy-heading" style={{ fontSize: '1.6rem', marginTop: '0.4rem', color: getStudentAccentColor(1) }}>
               📌 Student A Schedule
             </h2>
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <p className="handwritten" style={{ fontSize: '1.1rem' }}>Today's Date</p>
+          <div className="mobile-stack" style={{ textAlign: 'right' }}>
+            <p className="handwritten" style={{ fontSize: '1.1rem' }}>Today&apos;s Date</p>
             <p className="sketchy-heading" style={{ fontSize: '0.9rem', color: '#718096' }}>{currentDate}</p>
           </div>
         </div>
 
         {/* Today's Classes List */}
         <div className="mt-4" style={{ minHeight: '300px' }}>
+          <div className="flex-between mb-4" style={{ borderBottom: '1px dashed var(--ink-charcoal)', paddingBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <span className="handwritten" style={{ fontSize: '1.2rem', color: '#4a5568', fontWeight: 'bold' }}>Today&apos;s Sessions</span>
+            <button 
+              onClick={() => openCustomClassModal(1, currentDate)}
+              className="sketchy-btn sketchy-btn-accent"
+              style={{ fontSize: '0.8rem', padding: '0.2rem 0.5rem', boxShadow: '1.5px 2px 0px var(--ink-charcoal)' }}
+            >
+              + Add Custom Class
+            </button>
+          </div>
           {getTodayVacation(1) === 'VACATION' ? (
             <div style={{ padding: '2rem 1rem', textDecoration: 'none', textAlign: 'center' }}>
               <p className="handwritten" style={{ fontSize: '2rem', color: '#c53030' }}>🎉 Vacation Day!</p>
@@ -145,21 +157,31 @@ export default function DashboardView({
       <div className="notebook-page paper-lined">
         <div className="tape-decor"></div>
 
-        <div className="flex-between mb-4">
+        <div className="flex-between mb-4 flex-wrap mobile-stack" style={{ gap: '0.8rem' }}>
           <div>
             <span className="highlight-yellow handwritten" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>L1T1 Section C</span>
             <h2 className="sketchy-heading" style={{ fontSize: '1.6rem', marginTop: '0.4rem', color: getStudentAccentColor(2) }}>
               📌 Student B Schedule
             </h2>
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <p className="handwritten" style={{ fontSize: '1.1rem' }}>Today's Date</p>
+          <div className="mobile-stack" style={{ textAlign: 'right' }}>
+            <p className="handwritten" style={{ fontSize: '1.1rem' }}>Today&apos;s Date</p>
             <p className="sketchy-heading" style={{ fontSize: '0.9rem', color: '#718096' }}>{currentDate}</p>
           </div>
         </div>
 
         {/* Today's Classes List */}
         <div className="mt-4" style={{ minHeight: '300px' }}>
+          <div className="flex-between mb-4" style={{ borderBottom: '1px dashed var(--ink-charcoal)', paddingBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <span className="handwritten" style={{ fontSize: '1.2rem', color: '#4a5568', fontWeight: 'bold' }}>Today&apos;s Sessions</span>
+            <button 
+              onClick={() => openCustomClassModal(2, currentDate)}
+              className="sketchy-btn sketchy-btn-accent"
+              style={{ fontSize: '0.8rem', padding: '0.2rem 0.5rem', boxShadow: '1.5px 2px 0px var(--ink-charcoal)' }}
+            >
+              + Add Custom Class
+            </button>
+          </div>
           {getTodayVacation(2) === 'VACATION' ? (
             <div style={{ padding: '2rem 1rem', textDecoration: 'none', textAlign: 'center' }}>
               <p className="handwritten" style={{ fontSize: '2rem', color: '#c53030' }}>🎉 Vacation Day!</p>

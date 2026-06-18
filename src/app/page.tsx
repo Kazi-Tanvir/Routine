@@ -18,7 +18,8 @@ import {
   OverrideModal, 
   VacationModal, 
   CourseModal, 
-  SlotModal 
+  SlotModal,
+  CustomClassModal
 } from '@/components/Modals';
 
 export default function RoutineTracker() {
@@ -91,6 +92,17 @@ export default function RoutineTracker() {
     dayOfWeek: 'SUNDAY',
     startTime: '08:00',
     endTime: '09:00',
+    room: '',
+    group: ''
+  });
+
+  const [showCustomClassModal, setShowCustomClassModal] = useState(false);
+  const [customClassFormData, setCustomClassFormData] = useState({
+    studentId: '',
+    courseId: '',
+    date: '',
+    startTime: '09:00',
+    endTime: '10:00',
     room: '',
     group: ''
   });
@@ -867,6 +879,81 @@ export default function RoutineTracker() {
     }
   };
 
+  const openCustomClassModal = (studentId: number, dateStr?: string) => {
+    const sCourses = courses[studentId] || [];
+    const defaultCourseId = sCourses.length > 0 ? String(sCourses[0].id) : '';
+    setCustomClassFormData({
+      studentId: String(studentId),
+      courseId: defaultCourseId,
+      date: dateStr || currentDate,
+      startTime: '09:00',
+      endTime: '10:00',
+      room: '',
+      group: ''
+    });
+    setShowCustomClassModal(true);
+  };
+
+  const handleSaveCustomClass = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customClassFormData.studentId || !customClassFormData.courseId || !customClassFormData.date) {
+      alert('Please fill in student, subject and date fields.');
+      return;
+    }
+
+    if (isDemoMode) {
+      const newOverride = {
+        id: Date.now(),
+        studentId: parseInt(customClassFormData.studentId),
+        courseId: parseInt(customClassFormData.courseId),
+        weeklySlotId: null,
+        date: customClassFormData.date,
+        startTime: customClassFormData.startTime,
+        endTime: customClassFormData.endTime,
+        room: customClassFormData.room,
+        group: customClassFormData.group,
+        status: 'SCHEDULED',
+        isExtra: true
+      };
+
+      const updated = [...localOverrides, newOverride];
+      setLocalOverrides(updated);
+      saveDemoItems('routine_local_overrides', updated);
+      setShowCustomClassModal(false);
+      loadCalendarData();
+    } else {
+      try {
+        const res = await fetch('/api/calendar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studentId: parseInt(customClassFormData.studentId),
+            courseId: parseInt(customClassFormData.courseId),
+            weeklySlotId: null,
+            date: customClassFormData.date,
+            startTime: customClassFormData.startTime,
+            endTime: customClassFormData.endTime,
+            room: customClassFormData.room,
+            group: customClassFormData.group,
+            status: 'SCHEDULED',
+            isExtra: true
+          })
+        });
+
+        if (res.ok) {
+          setShowCustomClassModal(false);
+          loadCalendarData();
+        } else {
+          const errData = await res.json();
+          alert(errData.error || 'Failed to save custom class');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('An error occurred while saving custom class.');
+      }
+    }
+  };
+
   // Delete Course Subject
   const handleDeleteCourse = async (courseId: number) => {
     if (!confirm('Are you sure you want to delete this course? It will delete all schedules and attendances associated with it.')) return;
@@ -962,14 +1049,14 @@ export default function RoutineTracker() {
       )}
 
       {/* Main App Title Sheet */}
-      <div className="wobbly-box mb-4 flex-between" style={{ padding: '1.2rem 2.5rem', background: '#ffffff' }}>
+      <div className="wobbly-box mb-4 main-title-sheet" style={{ background: '#ffffff' }}>
         <div>
           <h1 className="sketchy-heading" style={{ fontSize: '2.2rem', marginBottom: '0.2rem' }}>📒 Student Routine Planner</h1>
           <p className="handwritten" style={{ fontSize: '1.4rem', color: '#4a5568' }}>Manage class timetables, holidays, and count attendance for two students side-by-side.</p>
         </div>
 
         {/* Tab Selection Navigation */}
-        <div className="flex-row">
+        <div className="nav-tabs-container">
           <button 
             onClick={() => setActiveTab('dashboard')} 
             className={`sketchy-btn ${activeTab === 'dashboard' ? 'sketchy-btn-accent' : ''}`}
@@ -1012,6 +1099,7 @@ export default function RoutineTracker() {
           setSelectedClass={setSelectedClass}
           setShowSubjectModal={setShowSubjectModal}
           analyticsData={analyticsData}
+          openCustomClassModal={openCustomClassModal}
         />
       )}
 
@@ -1032,6 +1120,7 @@ export default function RoutineTracker() {
           setShowVacationModal={setShowVacationModal}
           getReadableDate={getReadableDate}
           toggleAttendance={toggleAttendance}
+          openCustomClassModal={openCustomClassModal}
         />
       )}
 
@@ -1116,6 +1205,17 @@ export default function RoutineTracker() {
           setSlotFormData={setSlotFormData}
           handleSaveSlot={handleSaveSlot}
           setShowAddSlotModal={setShowAddSlotModal}
+        />
+      )}
+
+      {showCustomClassModal && (
+        <CustomClassModal 
+          students={students}
+          courses={courses}
+          customClassFormData={customClassFormData}
+          setCustomClassFormData={setCustomClassFormData}
+          handleSaveCustomClass={handleSaveCustomClass}
+          setShowCustomClassModal={setShowCustomClassModal}
         />
       )}
     </div>
